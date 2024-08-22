@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config();
+const userRouter = require("./routes/user.route");
 
 mongoose
   .connect(process.env.MONGO_URL)
@@ -16,3 +17,5 @@ mongoose
 app.listen(3000, () => {
   console.log("server listing on port 3000");
 });
+
+app.use("/api/user", userRouter);
