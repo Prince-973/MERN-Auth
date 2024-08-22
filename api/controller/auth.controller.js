@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
 const bcyptjs = require("bcryptjs");
+const errorHandler = require("../utils/error");
 
 const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -9,7 +10,7 @@ const signup = async (req, res, next) => {
     await newUser.save();
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
-    console.log("signup ERROR Backend:", error);
+    next(errorHandler(500, `Error in the Signup backend: ${error.message}`));
   }
 };
 
