@@ -43,11 +43,54 @@ const signin = async (req, res, next) => {
       .status(200)
       .json(rest);
   } catch (error) {
-    next(errorHandler(500, `Error in the Signiin backend: ${error.message}`));
+    next(errorHandler(500, `Error in the Signin backend: ${error.message}`));
+  }
+};
+
+const google = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY);
+      const userObject = user.toObject();
+      const { password: hashedPassword, ...rest } = userObject;
+
+      const expiryDate = new Date(Date.now() + 36000000); //1 hour
+      res
+        .cookie("token", token, { httpOnly: true, expires: expiryDate })
+        .status(200)
+        .json(rest);
+    } else {
+      const generetedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptjs.hashSync(generetedPassword, 10);
+      const newuser = new User({
+        username:
+          req.body.name.split(" ").join("").toLowerCase() +
+          Math.floor(Math.random() * 10000).toString(),
+        email: req.body.email,
+        password: hashedPassword,
+        profilePicture: req.body.photo,
+      });
+      await newuser.save();
+      const token = jwt.sign({ userId: newuser._id }, process.env.SECRET_KEY);
+      const userObject = newuser.toObject();
+      const { password: hashedPassword2, ...rest } = userObject;
+
+      const expiryDate = new Date(Date.now() + 3600000); //1 hour
+      res
+        .cookie("token", token, { httpOnly: true, expires: expiryDate })
+        .status(200)
+        .json(rest);
+    }
+  } catch (error) {
+    next(errorHandler(500, `Error in the google backend: ${error.message}`));
   }
 };
 
 module.exports = {
   signup,
   signin,
+  google,
 };
