@@ -68,7 +68,7 @@ function Signin() {
         </Link>
       </div>
       <p className="text-red-700 mt-5">
-        {error ? error.message : "Somthing went wrong"}
+        {error ? error.message || "Somthing went wrong" : ""}
       </p>
     </div>
   );
