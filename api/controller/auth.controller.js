@@ -88,9 +88,13 @@ const google = async (req, res, next) => {
     next(errorHandler(500, `Error in the google backend: ${error.message}`));
   }
 };
+const signout = (req, res, next) => {
+  res.clearCookie("token").status(200).json("Signout Success");
+};
 
 module.exports = {
   signup,
   signin,
   google,
+  signout,
 };
