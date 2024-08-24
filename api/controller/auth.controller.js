@@ -74,7 +74,7 @@ const google = async (req, res, next) => {
         profilePicture: req.body.photo,
       });
       await newuser.save();
-      const token = jwt.sign({ userId: newuser._id }, process.env.SECRET_KEY);
+      const token = jwt.sign({ id: newuser._id }, process.env.SECRET_KEY);
       const userObject = newuser.toObject();
       const { password: hashedPassword2, ...rest } = userObject;
 
