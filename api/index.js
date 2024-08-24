@@ -3,6 +3,7 @@ const app = express();
 app.use(express.json());
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const path = require("path");
 dotenv.config();
 const userRouter = require("./routes/user.route");
 const authRouter = require("./routes/auth.route");
@@ -20,6 +21,12 @@ mongoose
 
 app.listen(3000, () => {
   console.log("server listing on port 3000");
+});
+
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "..client/dist", "index.html"));
 });
 
 app.use("/api/user", userRouter);
